@@ -141,6 +141,11 @@ class Scene {
 
     this.orbConnectionThreshold = 120;
     this.orbConnectionMaxWidth = 5;
+
+    this._lastFrameTime = null;
+    this._fpsSamples = [];
+    this._fpsSampleSize = 10;
+    this._fpsCallback = null;
   }
 
   get width() {
@@ -229,6 +234,23 @@ class Scene {
     if (!this._isRunning)
       return;
 
+    if (this._fpsCallback !== null) {
+      const nowMS = performance.now();
+      if (this._lastFrameTime !== null) {
+        const elapsedMS = nowMS - this._lastFrameTime;
+        this._fpsSamples.push(1000.0 / elapsedMS);
+
+        if (this._fpsSamples.length >= this._fpsSampleSize) {
+          const avgFPS = this._fpsSamples.reduce((acc, item) => acc + item, 0) / this._fpsSamples.length;
+          this._fpsSamples = [];
+          this._fpsCallback(avgFPS);
+          this._fpsCallback = null;
+        }
+      }
+
+      this._lastFrameTime = nowMS;
+    }
+
     this.update();
     this.render();
 
@@ -242,6 +264,15 @@ class Scene {
 
   stop() {
     this._isRunning = false;
+  }
+
+  measureFPS(callback) {
+    if (this._fpsCallback !== null)
+      return false;
+
+    this._lastFrameTime = null;
+    this._fpsCallback = callback;
+    return true;
   }
 }
 

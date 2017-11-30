@@ -95,6 +95,11 @@ button {
   padding: 4px 8px;
 }
 
+button:hover {
+  background-color: #111;
+  color: #CCC;
+}
+
 .hl {
   letter-spacing: inherit;
   font: inherit;
@@ -111,17 +116,23 @@ button {
           <div class="control-block">
             <label class="labeled-field">
               <div>Orbs: </div>
-              <input type="number" id="numOrbs" maxlength="3" style="width: 50px;">
+              <input type="number" id="numOrbs" min="1" max="1000" style="width: 75px;">
             </label>
           </div>
           <div class="control-block">
             <label class="labeled-field">
               <div>Connection distance: </div>
-              <input type="number" id="numConnDistThresh" maxlength="4" style="width: 65px;">
+              <input type="number" id="numConnDistThresh" min="0" max="10000" style="width: 75px;">
             </label>
           </div>
           <div class="control-block">
-            <button id="btnRunStop">Stop</button>
+            <button id="btnRunStop">Pause</button>
+          </div>
+          <div class="control-block">
+            <div class="labeled-field">
+              <div>FPS: </div>
+              <div id="fps" style="color: lightblue;">N/A</div>
+            </div>
           </div>
         </div>
       </header>
@@ -149,6 +160,13 @@ const g_scene = new Scene(g_sceneElement);
 const g_numOrbs = document.getElementById("numOrbs");
 const g_numConnDistThresh = document.getElementById("numConnDistThresh");
 const g_btnRunStop = document.getElementById("btnRunStop");
+const g_fpsE = document.getElementById("fps");
+
+function updateFPS() {
+  g_scene.measureFPS(function(fps) {
+    g_fpsE.innerText = Math.round(fps).toString();
+  });
+}
 
 function toggleScene() {
   if (g_scene.isRunning) {
@@ -157,6 +175,7 @@ function toggleScene() {
   } else {
     g_scene.run();
     g_btnRunStop.innerText = "Pause";
+    updateFPS();
   }
 }
 
@@ -167,6 +186,18 @@ g_btnRunStop.addEventListener("click", function() {
 
 g_numOrbs.addEventListener("change", function() {
   g_scene.numOrbs = parseInt(this.value);
+  updateFPS();
+});
+
+g_numConnDistThresh.addEventListener("change", function() {
+  g_scene.orbConnectionThreshold = parseInt(this.value);
+  updateFPS();
+});
+
+document.addEventListener("keypress", function(event) {
+  if (event.key === " ") {
+    toggleScene();
+  }
 });
 
 function handleControlKeys(event) {
@@ -179,19 +210,13 @@ for (const inputElement of document.querySelectorAll('input[type="number"], inpu
   inputElement.addEventListener("keydown", handleControlKeys);
 }
 
-g_numConnDistThresh.addEventListener("change", function() {
-  g_scene.orbConnectionThreshold = parseInt(this.value);
-});
-
-document.addEventListener("keypress", function(event) {
-  if (event.key === " ") {
-    toggleScene();
-  }
-});
-
 g_scene.numOrbs = g_numOrbs.value = DEFAULT_NUM_ORBS;
 g_scene.orbConnectionThreshold = g_numConnDistThresh.value = DEFAULT_ORB_CONN_DIST_THRESH;
 g_scene.run();
+
+updateFPS();
+
+setInterval(updateFPS, 5000);
     </script>
   </body>
 </html>
