@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Gábor Kozár <id@gaborkozar.me>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:url" content="http://gaborkozar.me/orbscene/">
+    <meta property="og:title" content="OrbScene">
+    <meta property="og:description" content="I couldn't sleep one night, and then this happened...">
+    <meta property="og:image" content="http://gaborkozar.me/orbscene/screenshot.png">
+
+    <title>OrbScene</title>
+    <style type="text/css">
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  background-color: #222;
+  color: #CCC;
+}
+
+.main {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.main header {
+  position: relative;
+  background-color: #111;
+}
+
+.title {
+  margin: 0;
+  margin-left: 15px;
+  /*padding-left: 15px;
+  border-left: 10px solid lightblue;*/
+  letter-spacing: 2px;
+  color: lightblue;
+}
+
+.controls {
+  position: absolute;
+  right: 8px;
+  bottom: 4px;
+}
+
+.control-block {
+  display: inline-block;
+  margin-left: 25px;
+}
+
+#scene {
+  border-top: 1px solid darkblue;
+  flex-grow: 1;
+}
+
+.labeled-field, button {
+  display: block;
+  background-color: #444;
+  color: #DDD;
+  border: 1px solid silver;
+  border-radius: 3px;
+  font-size: inherit;
+}
+
+.labeled-field > * {
+  display: inline-block;
+  height: 100%;
+  border: 0;
+  color: inherit;
+  background-color: inherit;
+}
+
+.labeled-field > div {
+  flex: none;
+  height: 100%;
+  border-right: 1px solid #CCC;
+  padding: 4px 8px;
+  color: lightblue;
+}
+
+.labeled-field > input {
+  padding: 4px;
+  font-size: inherit;
+}
+
+button {
+  color: lightblue;
+  padding: 4px 8px;
+}
+
+.hl {
+  letter-spacing: inherit;
+  font: inherit;
+  color: deepskyblue;
+}
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <header>
+        <h1 class="title"><span class="hl">O</span>rb<span class="hl">S</span>cene</h1>
+
+        <div class="controls">
+          <div class="control-block">
+            <label class="labeled-field">
+              <div>Orbs: </div>
+              <input type="number" id="numOrbs" maxlength="3" style="width: 50px;">
+            </label>
+          </div>
+          <div class="control-block">
+            <label class="labeled-field">
+              <div>Connection distance: </div>
+              <input type="number" id="numConnDistThresh" maxlength="4" style="width: 65px;">
+            </label>
+          </div>
+          <div class="control-block">
+            <button id="btnRunStop">Stop</button>
+          </div>
+        </div>
+      </header>
+
+      <canvas id="scene">No canvas support?</canvas>
+    </div>
+
+    <script type="text/javascript" src="orbscene.js"></script>
+    <script type="text/javascript">
+const DEFAULT_NUM_ORBS = 200;
+const DEFAULT_ORB_CONN_DIST_THRESH = 120;
+
+const g_sceneElement = document.getElementById("scene");
+
+function resizeSceneCanvas() {
+  g_sceneElement.setAttribute("width", g_sceneElement.clientWidth);
+  g_sceneElement.setAttribute("height", g_sceneElement.clientHeight);
+}
+
+resizeSceneCanvas();
+window.addEventListener("resize", resizeSceneCanvas);
+
+const g_scene = new Scene(g_sceneElement);
+
+const g_numOrbs = document.getElementById("numOrbs");
+const g_numConnDistThresh = document.getElementById("numConnDistThresh");
+const g_btnRunStop = document.getElementById("btnRunStop");
+
+function toggleScene() {
+  if (g_scene.isRunning) {
+    g_scene.stop();
+    g_btnRunStop.innerText = "Resume";
+  } else {
+    g_scene.run();
+    g_btnRunStop.innerText = "Pause";
+  }
+}
+
+g_btnRunStop.addEventListener("click", function() {
+  toggleScene();
+  this.blur();
+});
+
+g_numOrbs.addEventListener("change", function() {
+  g_scene.numOrbs = parseInt(this.value);
+});
+
+function handleControlKeys(event) {
+  if (event.key === "Enter" || event.key === "Escape") {
+    event.target.blur();
+  }
+}
+
+for (const inputElement of document.querySelectorAll('input[type="number"], input[type="text"]')) {
+  inputElement.addEventListener("keydown", handleControlKeys);
+}
+
+g_numConnDistThresh.addEventListener("change", function() {
+  g_scene.orbConnectionThreshold = parseInt(this.value);
+});
+
+document.addEventListener("keypress", function(event) {
+  if (event.key === " ") {
+    toggleScene();
+  }
+});
+
+g_scene.numOrbs = g_numOrbs.value = DEFAULT_NUM_ORBS;
+g_scene.orbConnectionThreshold = g_numConnDistThresh.value = DEFAULT_ORB_CONN_DIST_THRESH;
+g_scene.run();
+    </script>
+  </body>
+</html>
