@@ -13,7 +13,7 @@ class Point2 {
   }
 
   add() {
-    if ((arguments[0] instanceof Point2) || (arguments[0] instanceof Vec2)) {
+    if ((arguments[0] instanceof Point2) || (arguments[0] instanceof Vector2)) {
       for (const arg of arguments) {
         this.x += arg.x;
         this.y += arg.y;
@@ -27,7 +27,7 @@ class Point2 {
   }
 
   getVectorTo(otherPoint) {
-    return new Vec2(otherPoint.x - this.x, otherPoint.y - this.y);
+    return new Vector2(otherPoint.x - this.x, otherPoint.y - this.y);
   }
 
   isEqualTo(otherPoint) {
@@ -45,7 +45,7 @@ class Point2 {
 
 Point2.ORIGO = new Point2(0, 0);
 
-class Vec2 {
+class Vector2 {
   static equals(a, b) {
     return a.isEqualTo(b);
   }
@@ -85,7 +85,7 @@ class Vec2 {
   }
 
   clone() {
-    return new Vec2(this.x, this.y);
+    return new Vector2(this.x, this.y);
   }
 
   toNormalized() {
@@ -93,7 +93,7 @@ class Vec2 {
   }
 }
 
-Vec2.NULL = new Vec2(0, 0);
+Vector2.NULL = new Vector2(0, 0);
 
 function clamp(a, min, max) {
   return Math.min(Math.max(a, min), max);
@@ -159,7 +159,7 @@ class Scene {
 
   createOrb() {
     const loc = new Point2(genRandom(0, this.width), genRandom(0, this.height));
-    const vec = (new Vec2(Math.random(), Math.random())).scaleToLength(genRandom(this.minOrbSpeed, this.maxOrbSpeed));
+    const vec = (new Vector2(Math.random(), Math.random())).scaleToLength(genRandom(this.minOrbSpeed, this.maxOrbSpeed));
     const size = genRandom(this.minOrbSize, this.maxOrbSize);
 
     const orb = new Orb(loc, vec, size);
@@ -191,35 +191,37 @@ class Scene {
     this.context.clearRect(0, 0, this.width, this.height);
   }
 
+  _renderConnection(orb1, orb2, distance) {
+    this.context.save();
+
+    this.context.strokeStyle = `rgba(0, 153, 255, ${1 - distance / this.orbConnectionThreshold})`;
+    this.context.lineWidth = (1 - (distance / this.orbConnectionThreshold)) * this.orbConnectionMaxWidth;
+
+    this.context.beginPath();
+    this.context.moveTo(Math.floor(orb1.location.x), Math.floor(orb1.location.y));
+    this.context.lineTo(Math.floor(orb2.location.x), Math.floor(orb2.location.y));
+    this.context.stroke();
+
+    this.context.restore();
+  }
+
   _renderConnections() {
-    let remainingOrbs = this._orbs.concat([]);
+    const remainingOrbs = this._orbs.concat([]);
 
     let orb;
     while ((orb = remainingOrbs.pop()) !== undefined) {
       for (const otherOrb of remainingOrbs) {
         const distance = Point2.getDistanceBetween(orb.location, otherOrb.location);
         if (distance <= this.orbConnectionThreshold) {
-          this.context.save();
-
-          this.context.strokeStyle = `rgba(0, 153, 255, ${1 - distance / this.orbConnectionThreshold})`;
-          this.context.lineWidth = (1 - (distance / this.orbConnectionThreshold)) * this.orbConnectionMaxWidth;
-
-          this.context.beginPath();
-          this.context.moveTo(Math.floor(orb.location.x), Math.floor(orb.location.y));
-          this.context.lineTo(Math.floor(otherOrb.location.x), Math.floor(otherOrb.location.y));
-          this.context.stroke();
-
-          this.context.restore();
+          this._renderConnection(orb, otherOrb, distance);
         }
       }
     }
   }
 
   render() {
-    // clear the canvas
     this.clear();
 
-    // render the orbs
     if (this.areOrbsRendered) {
       for (const orb of this._orbs) {
         orb.render(this.context);
