@@ -10,223 +10,57 @@
     <meta property="og:image" content="http://gaborkozar.me/orbscene/screenshot.png">
 
     <title>OrbScene</title>
-    <style type="text/css">
-* {
-  box-sizing: border-box;
-}
-
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-
-  background-color: #222;
-  color: #CCC;
-}
-
-.main {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.main header {
-  position: relative;
-  background-color: #111;
-}
-
-.title {
-  margin: 0;
-  margin-left: 15px;
-  /*padding-left: 15px;
-  border-left: 10px solid lightblue;*/
-  letter-spacing: 2px;
-  color: lightblue;
-}
-
-.controls {
-  position: absolute;
-  right: 8px;
-  bottom: 4px;
-}
-
-.control-block {
-  display: inline-block;
-  margin-left: 25px;
-}
-
-#scene {
-  border-top: 1px solid darkblue;
-  flex-grow: 1;
-}
-
-.labeled-field, button {
-  display: inline-block;
-  background-color: #444;
-  color: #DDD;
-  border: 1px solid silver;
-  border-radius: 3px;
-  font-size: inherit;
-  padding: 0 4px;
-}
-
-.labeled-field > * {
-  display: inline-block;
-  border: 0;
-  color: inherit;
-  background-color: inherit;
-}
-
-.labeled-field > div {
-  flex: none;
-  height: 100%;
-  border-right: 1px solid #CCC;
-  padding: 4px 8px;
-  color: lightblue;
-}
-
-.labeled-field > input {
-  padding: 4px;
-  font-size: inherit;
-}
-
-button {
-  color: lightblue;
-  padding: 4px 8px;
-}
-
-button:hover {
-  background-color: #111;
-  color: #CCC;
-}
-
-.hl {
-  letter-spacing: inherit;
-  font: inherit;
-  color: deepskyblue;
-}
-    </style>
+    <link rel="stylesheet" href="css/main.css" type="text/css">
+    <link rel="stylesheet" href="css/mobile.css" type="text/css">
+    <link rel="stylesheet" href="css/desktop.css" type="text/css">
   </head>
   <body>
     <div class="main">
       <header>
-        <h1 class="title"><span class="hl">O</span>rb<span class="hl">S</span>cene</h1>
+        <h1 class="title">
+          <span class="hl">O</span>rb<span class="hl">S</span>cene
+        </h1>
 
-        <div class="controls">
-          <div class="control-block">
-            <label class="labeled-field">
-              <div>Orbs: </div>
-              <input type="number" id="numOrbs" min="1" max="1000" style="width: 75px;">
-            </label>
+        <div class="settings-container">
+          <div id="settings">
+            <div class="settings-block">
+              <label class="labeled-field">
+                <div>Orbs: </div>
+                <input type="number" id="numOrbs" min="1" max="1000" style="width: 75px;">
+              </label>
 
-            <label class="labeled-field">
-              <div>Display orbs?</div>
-              <input type="checkbox" id="displayOrbs" value="1" checked>
-            </label>
-          </div>
-          <div class="control-block">
-            <label class="labeled-field">
-              <div>Connection distance: </div>
-              <input type="number" id="numConnDistThresh" min="0" max="10000" style="width: 75px;">
-            </label>
-          </div>
-          <div class="control-block">
-            <button id="btnRunStop">Pause</button>
-          </div>
-          <div class="control-block">
-            <div class="labeled-field">
-              <div>FPS: </div>
-              <div id="fps" style="color: lightblue; border-right: 0;">N/A</div>
+              <label class="labeled-field">
+                <div>Display orbs?</div>
+                <input type="checkbox" id="displayOrbs" value="1" checked>
+              </label>
+            </div>
+
+            <div class="settings-block">
+              <label class="labeled-field">
+                <div>Connection distance: </div>
+                <input type="number" id="numConnDistThresh" min="0" max="10000" style="width: 75px;">
+              </label>
+            </div>
+
+            <div class="settings-block">
+              <div class="labeled-field">
+                <div>FPS: </div>
+                <div id="fps" style="color: lightblue; border-right: 0;">N/A</div>
+              </div>
             </div>
           </div>
         </div>
+
+        <div class="controls">
+          <button id="btnSettings">Settings</button>
+          <button id="btnRunStop">Pause</button>
+        </div>
       </header>
 
-      <canvas id="scene">No canvas support?</canvas>
+      <canvas id="scene">Requires a browser with HTML5 canvas support.</canvas>
     </div>
 
-    <script type="text/javascript" src="orbscene.js"></script>
-    <script type="text/javascript">
-const DEFAULT_NUM_ORBS = 200;
-const DEFAULT_ORB_CONN_DIST_THRESH = 120;
-
-const g_sceneElement = document.getElementById("scene");
-
-function resizeSceneCanvas() {
-  g_sceneElement.setAttribute("width", g_sceneElement.clientWidth);
-  g_sceneElement.setAttribute("height", g_sceneElement.clientHeight);
-}
-
-resizeSceneCanvas();
-window.addEventListener("resize", resizeSceneCanvas);
-
-const g_scene = new Scene(g_sceneElement);
-
-const g_displayOrbsE = document.getElementById("displayOrbs");
-const g_numOrbs = document.getElementById("numOrbs");
-const g_numConnDistThresh = document.getElementById("numConnDistThresh");
-const g_btnRunStop = document.getElementById("btnRunStop");
-const g_fpsE = document.getElementById("fps");
-
-function updateFPS() {
-  g_scene.measureFPS(function(fps) {
-    g_fpsE.innerText = Math.round(fps).toString();
-  });
-}
-
-function toggleScene() {
-  if (g_scene.isRunning) {
-    g_scene.stop();
-    g_btnRunStop.innerText = "Resume";
-  } else {
-    g_scene.run();
-    g_btnRunStop.innerText = "Pause";
-    updateFPS();
-  }
-}
-
-g_btnRunStop.addEventListener("click", function() {
-  toggleScene();
-  this.blur();
-});
-
-g_displayOrbsE.addEventListener("change", function() {
-  g_scene.areOrbsRendered = this.checked;
-});
-
-g_numOrbs.addEventListener("change", function() {
-  g_scene.numOrbs = parseInt(this.value);
-  updateFPS();
-});
-
-g_numConnDistThresh.addEventListener("change", function() {
-  g_scene.orbConnectionThreshold = parseInt(this.value);
-  updateFPS();
-});
-
-document.addEventListener("keypress", function(event) {
-  if (event.key === " ") {
-    toggleScene();
-  }
-});
-
-function handleControlKeys(event) {
-  if (event.key === "Enter" || event.key === "Escape") {
-    event.target.blur();
-  }
-}
-
-for (const inputElement of document.querySelectorAll('input[type="number"], input[type="text"]')) {
-  inputElement.addEventListener("keydown", handleControlKeys);
-}
-
-g_scene.numOrbs = g_numOrbs.value = DEFAULT_NUM_ORBS;
-g_scene.orbConnectionThreshold = g_numConnDistThresh.value = DEFAULT_ORB_CONN_DIST_THRESH;
-g_scene.run();
-
-updateFPS();
-
-setInterval(updateFPS, 5000);
-    </script>
+    <script type="text/javascript" src="js/orbscene.js"></script>
+    <script type="text/javascript" src="js/ui.js"></script>
   </body>
 </html>

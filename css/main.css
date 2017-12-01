@@ -1,0 +1,100 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  background-color: #222;
+  color: #CCC;
+}
+
+.main {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.main header {
+  position: relative;
+  background-color: #111;
+}
+
+.title {
+  display: inline-block;
+  margin: 0;
+  margin-left: 15px;
+  letter-spacing: 2px;
+  color: lightblue;
+}
+
+.settings-container {
+  position: relative;
+}
+
+#settings, .controls {
+  position: absolute;
+  right: 8px;
+  bottom: 1px;
+}
+
+#settings {
+  right: 100px;
+}
+
+.settings-block {
+  display: inline-block;
+  margin-left: 25px;
+}
+
+#scene {
+  border-top: 1px solid darkblue;
+  flex-grow: 1;
+}
+
+.labeled-field, button {
+  display: inline-block;
+  background-color: #444;
+  color: #DDD;
+  border: 1px solid silver;
+  border-radius: 3px;
+  font-size: inherit;
+  padding: 2px 4px;
+}
+
+.labeled-field > * {
+  display: inline-block;
+  border: 0;
+  color: inherit;
+  background-color: inherit;
+}
+
+.labeled-field > div {
+  flex: none;
+  height: 100%;
+  border-right: 1px solid #CCC;
+  padding: 4px 8px;
+  color: lightblue;
+}
+
+.labeled-field > input {
+  padding: 4px;
+  font-size: inherit;
+}
+
+button {
+  color: lightblue;
+  padding: 6px 8px;
+}
+
+.hl {
+  letter-spacing: inherit;
+  font: inherit;
+  color: deepskyblue;
+}
+
+#btnSettings {
+  display: none;
+}

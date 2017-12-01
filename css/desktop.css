@@ -1,0 +1,8 @@
+@media (min-width: 1000px) {
+  /* hover effects seem to glitch on iOS in Safari, so only activate them on desktop */
+  button:hover {
+    background-color: #EEE;
+    color: black;
+    cursor: pointer;
+  }
+}
