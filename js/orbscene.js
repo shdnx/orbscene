@@ -132,7 +132,7 @@ class Scene {
     this._orbs = [];
     this._isRunning = false;
 
-    this._genFrame = this._genFrame.bind(this);
+    this._runProcFrame = this._runProcFrame.bind(this);
 
     this.minOrbSpeed = 0.4;
     this.maxOrbSpeed = 2;
@@ -235,10 +235,7 @@ class Scene {
     return this._isRunning;
   }
 
-  _genFrame() {
-    if (!this._isRunning)
-      return;
-
+  processFrame() {
     if (this._fpsCallback !== null) {
       const nowMS = performance.now();
       if (this._lastFrameTime !== null) {
@@ -258,13 +255,19 @@ class Scene {
 
     this.update();
     this.render();
+  }
 
-    window.requestAnimationFrame(this._genFrame);
+  _runProcFrame() {
+    if (!this._isRunning)
+      return;
+
+    this.processFrame();
+    window.requestAnimationFrame(this._runProcFrame);
   }
 
   run() {
     this._isRunning = true;
-    window.requestAnimationFrame(this._genFrame);
+    window.requestAnimationFrame(this._runProcFrame);
   }
 
   stop() {

@@ -22,7 +22,7 @@ function updateFPS() {
   });
 }
 
-function toggleScene() {
+function togglePause() {
   if (g_scene.isRunning) {
     g_scene.stop();
     g_btnRunStopEl.innerText = "Resume";
@@ -34,27 +34,38 @@ function toggleScene() {
 }
 
 g_btnRunStopEl.addEventListener("click", function() {
-  toggleScene();
+  togglePause();
   this.blur();
 });
 
 document.getElementById("displayOrbs").addEventListener("change", function() {
   g_scene.areOrbsRendered = this.checked;
+
+  if (!g_scene.isRunning)
+    g_scene.processFrame();
 });
 
 g_numOrbsEl.addEventListener("change", function() {
   g_scene.numOrbs = parseInt(this.value);
+
+  if (!g_scene.isRunning)
+    g_scene.processFrame();
+
   updateFPS();
 });
 
 g_numConnDistThreshEl.addEventListener("change", function() {
   g_scene.orbConnectionThreshold = parseInt(this.value);
+
+  if (!g_scene.isRunning)
+    g_scene.processFrame();
+
   updateFPS();
 });
 
 document.addEventListener("keypress", function(event) {
   if (event.key === " ") {
-    toggleScene();
+    togglePause();
   }
 });
 
