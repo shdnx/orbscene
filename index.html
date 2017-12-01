@@ -61,17 +61,17 @@ html, body {
 }
 
 .labeled-field, button {
-  display: block;
+  display: inline-block;
   background-color: #444;
   color: #DDD;
   border: 1px solid silver;
   border-radius: 3px;
   font-size: inherit;
+  padding: 0 4px;
 }
 
 .labeled-field > * {
   display: inline-block;
-  height: 100%;
   border: 0;
   color: inherit;
   background-color: inherit;
@@ -118,6 +118,11 @@ button:hover {
               <div>Orbs: </div>
               <input type="number" id="numOrbs" min="1" max="1000" style="width: 75px;">
             </label>
+
+            <label class="labeled-field">
+              <div>Display orbs?</div>
+              <input type="checkbox" id="displayOrbs" value="1" checked>
+            </label>
           </div>
           <div class="control-block">
             <label class="labeled-field">
@@ -131,7 +136,7 @@ button:hover {
           <div class="control-block">
             <div class="labeled-field">
               <div>FPS: </div>
-              <div id="fps" style="color: lightblue;">N/A</div>
+              <div id="fps" style="color: lightblue; border-right: 0;">N/A</div>
             </div>
           </div>
         </div>
@@ -157,6 +162,7 @@ window.addEventListener("resize", resizeSceneCanvas);
 
 const g_scene = new Scene(g_sceneElement);
 
+const g_displayOrbsE = document.getElementById("displayOrbs");
 const g_numOrbs = document.getElementById("numOrbs");
 const g_numConnDistThresh = document.getElementById("numConnDistThresh");
 const g_btnRunStop = document.getElementById("btnRunStop");
@@ -182,6 +188,10 @@ function toggleScene() {
 g_btnRunStop.addEventListener("click", function() {
   toggleScene();
   this.blur();
+});
+
+g_displayOrbsE.addEventListener("change", function() {
+  g_scene.areOrbsRendered = this.checked;
 });
 
 g_numOrbs.addEventListener("change", function() {

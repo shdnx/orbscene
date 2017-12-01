@@ -127,6 +127,7 @@ class Scene {
   constructor(canvas) {
     this.canvas = canvas;
     this.context = canvas.getContext("2d");
+    this.areOrbsRendered = true;
 
     this._orbs = [];
     this._isRunning = false;
@@ -219,8 +220,10 @@ class Scene {
     this.clear();
 
     // render the orbs
-    for (const orb of this._orbs) {
-      orb.render(this.context);
+    if (this.areOrbsRendered) {
+      for (const orb of this._orbs) {
+        orb.render(this.context);
+      }
     }
 
     this._renderConnections();
