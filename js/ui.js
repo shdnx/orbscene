@@ -1,12 +1,12 @@
-const DEFAULT_NUM_ORBS = 200;
-const DEFAULT_ORB_CONN_DIST_THRESH = 120;
-
 const g_sceneEl = document.getElementById("scene");
 const g_numOrbsEl = document.getElementById("numOrbs");
 const g_numConnDistThreshEl = document.getElementById("numConnDistThresh");
 const g_btnRunStopEl = document.getElementById("btnRunStop");
 
-const g_scene = new Scene(g_sceneEl);
+const g_scene = new Scene(g_sceneEl, {
+  numOrbs: 200,
+  connectionThreshold: 120
+});
 
 function resizeSceneCanvas() {
   g_sceneEl.setAttribute("width", g_sceneEl.clientWidth);
@@ -39,14 +39,18 @@ g_btnRunStopEl.addEventListener("click", function() {
 });
 
 document.getElementById("displayOrbs").addEventListener("change", function() {
-  g_scene.areOrbsRendered = this.checked;
+  g_scene.updateSettings({
+    renderOrbs: this.checked
+  });
 
   if (!g_scene.isRunning)
     g_scene.processFrame();
 });
 
 g_numOrbsEl.addEventListener("change", function() {
-  g_scene.numOrbs = parseInt(this.value);
+  g_scene.updateSettings({
+    numOrbs: parseInt(this.value)
+  });
 
   if (!g_scene.isRunning)
     g_scene.processFrame();
@@ -55,7 +59,9 @@ g_numOrbsEl.addEventListener("change", function() {
 });
 
 g_numConnDistThreshEl.addEventListener("change", function() {
-  g_scene.orbConnectionThreshold = parseInt(this.value);
+  g_scene.updateSettings({
+    connectionThreshold: parseInt(this.value)
+  });
 
   if (!g_scene.isRunning)
     g_scene.processFrame();
@@ -86,8 +92,9 @@ document.getElementById("btnSettings").addEventListener("click", function() {
   this.blur();
 });
 
-g_scene.numOrbs = g_numOrbsEl.value = DEFAULT_NUM_ORBS;
-g_scene.orbConnectionThreshold = g_numConnDistThreshEl.value = DEFAULT_ORB_CONN_DIST_THRESH;
+g_numOrbsEl.value = g_scene.settings.numOrbs;
+g_numConnDistThreshEl.value = g_scene.settings.connectionThreshold;
+
 g_scene.run();
 
 updateFPS();

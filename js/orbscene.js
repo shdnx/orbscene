@@ -1,3 +1,5 @@
+"use strict";
+
 class Point2 {
   static equals(a, b) {
     return a.isEqualTo(b);
@@ -124,29 +126,24 @@ class ColorRGB {
 }
 
 class Scene {
-  constructor(canvas) {
+  constructor(canvas, settings) {
     this.canvas = canvas;
     this.context = canvas.getContext("2d");
-    this.areOrbsRendered = true;
+
+    this._settings = Object.assign({}, Scene.defaultSettings);
 
     this._orbs = [];
     this._isRunning = false;
 
     this._runProcFrame = this._runProcFrame.bind(this);
 
-    this.minOrbSpeed = 0.4;
-    this.maxOrbSpeed = 2;
-
-    this.minOrbSize = 2;
-    this.maxOrbSize = 10;
-
-    this.orbConnectionThreshold = 120;
-    this.orbConnectionMaxWidth = 5;
-
     this._lastFrameTime = null;
     this._fpsSamples = [];
     this._fpsSampleSize = 10;
     this._fpsCallback = null;
+
+    if (settings)
+      this.updateSettings(settings);
   }
 
   get width() {
@@ -157,28 +154,37 @@ class Scene {
     return this.canvas.height;
   }
 
+  get settings() {
+    return this._settings;
+  }
+
   createOrb() {
     const loc = new Point2(genRandom(0, this.width), genRandom(0, this.height));
-    const vec = (new Vector2(Math.random(), Math.random())).scaleToLength(genRandom(this.minOrbSpeed, this.maxOrbSpeed));
-    const size = genRandom(this.minOrbSize, this.maxOrbSize);
+    const vec = (new Vector2(Math.random(), Math.random()))
+      .scaleToLength(genRandom(this._settings.minOrbSpeed, this._settings.maxOrbSpeed));
+    const size = genRandom(this._settings.minOrbSize, this._settings.maxOrbSize);
 
     const orb = new Orb(loc, vec, size);
     this._orbs.push(orb);
     return orb;
   }
 
-  get numOrbs() {
-    return this._orbs.length;
-  }
-
-  set numOrbs(numOrbs) {
-    if (numOrbs < this._orbs.length) {
-      this._orbs.splice(numOrbs);
+  _changeNumOrbs(newNumOrbs) {
+    if (newNumOrbs < this._orbs.length) {
+      this._orbs.splice(newNumOrbs);
     } else {
-      for (let i = 0; i < numOrbs - this._orbs.length; i++) {
+      for (let i = 0; i < newNumOrbs - this._orbs.length; i++) {
         this.createOrb();
       }
     }
+  }
+
+  updateSettings(changes) {
+    if (changes.numOrbs) {
+      this._changeNumOrbs(changes.numOrbs);
+    }
+
+    Object.assign(this._settings, changes);
   }
 
   update() {
@@ -192,17 +198,13 @@ class Scene {
   }
 
   _renderConnection(orb1, orb2, distance) {
-    this.context.save();
-
-    this.context.strokeStyle = `rgba(0, 153, 255, ${1 - distance / this.orbConnectionThreshold})`;
-    this.context.lineWidth = (1 - (distance / this.orbConnectionThreshold)) * this.orbConnectionMaxWidth;
+    this.context.strokeStyle = `rgba(0, 153, 255, ${1 - distance / this._settings.connectionThreshold})`;
+    this.context.lineWidth = (1 - (distance / this._settings.connectionThreshold)) * this._settings.connectionMaxWidth;
 
     this.context.beginPath();
     this.context.moveTo(Math.floor(orb1.location.x), Math.floor(orb1.location.y));
     this.context.lineTo(Math.floor(orb2.location.x), Math.floor(orb2.location.y));
     this.context.stroke();
-
-    this.context.restore();
   }
 
   _renderConnections() {
@@ -212,7 +214,7 @@ class Scene {
     while ((orb = remainingOrbs.pop()) !== undefined) {
       for (const otherOrb of remainingOrbs) {
         const distance = Point2.getDistanceBetween(orb.location, otherOrb.location);
-        if (distance <= this.orbConnectionThreshold) {
+        if (distance <= this._settings.connectionThreshold) {
           this._renderConnection(orb, otherOrb, distance);
         }
       }
@@ -222,7 +224,7 @@ class Scene {
   render() {
     this.clear();
 
-    if (this.areOrbsRendered) {
+    if (this._settings.renderOrbs) {
       for (const orb of this._orbs) {
         orb.render(this.context);
       }
@@ -257,7 +259,7 @@ class Scene {
     this.render();
   }
 
-  _runProcFrame() {
+  _runProcFrame(ts) {
     if (!this._isRunning)
       return;
 
@@ -283,6 +285,17 @@ class Scene {
     return true;
   }
 }
+
+Scene.defaultSettings = {
+  renderOrbs: true,
+  numOrbs: 100,
+  minOrbSpeed: 0.4,
+  maxOrbSpeed: 2,
+  minOrbSize: 2,
+  maxOrbSize: 10,
+  connectionThreshold: 120,
+  connectionMaxWidth: 5
+};
 
 class Orb {
   constructor(loc, vec, size) {
@@ -353,7 +366,6 @@ class Orb {
   }
 
   render(ctx) {
-    ctx.save();
     ctx.fillStyle = this.color.toString();
 
     ctx.beginPath();
@@ -366,7 +378,5 @@ class Orb {
       /*counterclockwise=*/false
     );
     ctx.fill();
-
-    ctx.restore();
   }
 }
