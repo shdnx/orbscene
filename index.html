@@ -37,7 +37,7 @@
 
             <div class="settings-block">
               <label class="labeled-field">
-                <div>Connection distance: </div>
+                <div>Connect within: </div>
                 <input type="number" id="numConnDistThresh" min="0" max="10000" style="width: 75px;">
               </label>
             </div>
@@ -47,6 +47,10 @@
                 <div>FPS: </div>
                 <div id="fps" style="color: lightblue; border-right: 0;">N/A</div>
               </div>
+            </div>
+
+            <div class="settings-block">
+              <button id="btnExportSVG">Export SVG</button>
             </div>
           </div>
         </div>
@@ -62,5 +66,6 @@
 
     <script type="text/javascript" src="js/orbscene.js"></script>
     <script type="text/javascript" src="js/ui.js"></script>
+    <script type="text/javascript" src="js/lib/canvas2svg.js"></script>
   </body>
 </html>

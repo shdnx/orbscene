@@ -1,5 +1,21 @@
 "use strict";
 
+// Based on: https://stackoverflow.com/a/18197341/128240
+function promptDownloadFile(filename, text, mimeType) {
+  mimeType = mimeType || "text/plain";
+
+  const element = document.createElement('a');
+  element.setAttribute('href', `data:${mimeType};charset=utf-8,${encodeURIComponent(text)}`);
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
+
 class Point2 {
   static equals(a, b) {
     return a.isEqualTo(b);
@@ -284,6 +300,17 @@ class Scene {
     this._fpsCallback = callback;
     return true;
   }
+
+  exportToSVG() {
+    const mockContext = new C2S(this.width, this.height);
+
+    const oldContext = this.context;
+    this.context = mockContext;
+    this.render();
+    this.context = oldContext;
+
+    promptDownloadFile("orbscene.svg", mockContext.getSerializedSvg(), "image/svg+xml");
+  }
 }
 
 Scene.defaultSettings = {
@@ -303,6 +330,7 @@ class Orb {
     this.vector = vec;
     this.size = size;
     this.color = ColorRGB.createRandom();
+    //this.color = new ColorRGB(0xFF, 0x66, 0x00); -- orange
   }
 
   get direction() {

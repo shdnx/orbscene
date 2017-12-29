@@ -92,6 +92,10 @@ document.getElementById("btnSettings").addEventListener("click", function() {
   this.blur();
 });
 
+document.getElementById("btnExportSVG").addEventListener("click", function() {
+  g_scene.exportToSVG();
+});
+
 g_numOrbsEl.value = g_scene.settings.numOrbs;
 g_numConnDistThreshEl.value = g_scene.settings.connectionThreshold;
 

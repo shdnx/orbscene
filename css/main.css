@@ -18,8 +18,10 @@ html, body {
 }
 
 .main header {
+  display: flex;
   position: relative;
   background-color: #111;
+  padding: 4px;
 }
 
 .title {
@@ -31,22 +33,12 @@ html, body {
 }
 
 .settings-container {
-  position: relative;
-}
-
-#settings, .controls {
-  position: absolute;
-  right: 8px;
-  bottom: 1px;
-}
-
-#settings {
-  right: 100px;
+  flex: 1;
 }
 
 .settings-block {
   display: inline-block;
-  margin-left: 25px;
+  margin: 0 20px;
 }
 
 #scene {
