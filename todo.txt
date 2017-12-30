@@ -1,0 +1,21 @@
+General:
+ - Replace favicon.ico with a proper favicon
+ - Update manifest.json: "manifest.json provides metadata used when your web app is added to the homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/". Also the theme-color <meta> tag.
+ - What's the equivalent of manifest.json for Apple stuff?
+
+Scene:
+ - follow (or react to) the cursor:
+    on click, spawn orbs
+    on right click, pull orbs
+ - different initial states, e.g. all of them start in the center shot out in a circular pattern, or all of them start on the single side
+ - better direction-switching algorithm?
+ - add option to change speed
+ - add option to make all orbs the same size and color
+
+Use new technologies:
+ - Use Flow. create-react-app has built-in support for it, see section "Adding Flow" in its README
+ - Use ESLint, for code checking (compatible with Flow?). It's possible to integrate this with Sublime Text - see "Displaying Lint Output in the Editor" in create-react-app-README.md
+ - Use Prettier for automatically formatting the code (Sublime Text support?). create-react-app-README.md mentions this.
+
+$ yarn add glamorous glamor prop-types
+warning Error running install script for optional dependency: "/Users/gabor/Documents/dev/orbscene/node_modules/fsevents: Command failed.\nExit code: 1\nCommand: node install\nArguments: \nDirectory: /Users/gabor/Documents/dev/orbscene/node_modules/fsevents\nOutput:\nnode-pre-gyp info it worked if it ends with ok\nnode-pre-gyp info using node-pre-gyp@0.6.39\nnode-pre-gyp info using node@9.3.0 | darwin | x64\nnode-pre-gyp info check checked for \"/Users/gabor/Documents/dev/orbscene/node_modules/fsevents/lib/binding/Release/node-v59-darwin-x64/fse.node\" (not found)\nnode-pre-gyp http GET https://fsevents-binaries.s3-us-west-2.amazonaws.com/v1.1.2/fse-v1.1.2-node-v59-darwin-x64.tar.gz\nnode-pre-gyp http 404 https://fsevents-binaries.s3-us-west-2.amazonaws.com/v1.1.2/fse-v1.1.2-node-v59-darwin-x64.tar.gz\nnode-pre-gyp ERR! Tried to download(404): https://fsevents-binaries.s3-us-west-2.amazonaws.com/v1.1.2/fse-v1.1.2-node-v59-darwin-x64.tar.gz \nnode-pre-gyp ERR! Pre-built binaries not found for fsevents@1.1.2 and node@9.3.0 (node-v59 ABI, unknown) (falling back to source compile with node-gyp) \nnode-pre-gyp http 404 status code downloading tarball https://fsevents-binaries.s3-us-west-2.amazonaws.com/v1.1.2/fse-v1.1.2-node-v59-darwin-x64.tar.gz \nnode-pre-gyp ERR! build error \nnode-pre-gyp ERR! stack Error: Failed to execute 'node-gyp clean' (Error: spawn node-gyp ENOENT)\nnode-pre-gyp ERR! stack     at ChildProcess.<anonymous> (/Users/gabor/Documents/dev/orbscene/node_modules/node-pre-gyp/lib/util/compile.js:77:29)\nnode-pre-gyp ERR! stack     at ChildProcess.emit (events.js:159:13)\nnode-pre-gyp ERR! stack     at Process.ChildProcess._han

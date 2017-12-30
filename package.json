@@ -1,0 +1,22 @@
+{
+  "name": "orbscene",
+  "version": "2.0.0",
+  "description": "A simple HTML5 <canvas> visual experiment, inspired by particles.js.",
+  "author": "Gabor Kozar <id@gaborkozar.me>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "glamor": "^2.20.40",
+    "glamorous": "^4.11.2",
+    "prop-types": "^15.6.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-scripts": "1.0.17"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
