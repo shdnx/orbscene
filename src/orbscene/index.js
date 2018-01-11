@@ -1,8 +1,8 @@
 import Orb from './Orb';
 import { Point2, Vector2 } from './geometry2D';
-import { getRandomIntBetween } from '../util/math';
+import { getRandomIntBetween } from './util/math';
 
-export default class SceneDriver {
+export default class OrbScene {
   static defaultSettings = {
     renderOrbs: true,
     numOrbs: 100,
@@ -33,7 +33,7 @@ export default class SceneDriver {
     this.canvasEl = canvasEl;
     this.context = canvasEl.getContext("2d");
 
-    this._settings = Object.assign({}, SceneDriver.defaultSettings);
+    this._settings = Object.assign({}, OrbScene.defaultSettings);
 
     this._runProcFrame = this._runProcFrame.bind(this);
 
@@ -75,11 +75,11 @@ export default class SceneDriver {
   }
 
   updateSettings(changes) {
+    Object.assign(this._settings, changes);
+
     if (changes.numOrbs) {
       this._changeNumOrbs(changes.numOrbs);
     }
-
-    Object.assign(this._settings, changes);
   }
 
   update() {
@@ -101,14 +101,16 @@ export default class SceneDriver {
     this.context.moveTo(Math.floor(orb1.location.x), Math.floor(orb1.location.y));
     this.context.lineTo(Math.floor(orb2.location.x), Math.floor(orb2.location.y));
     this.context.stroke();
+    //this.context.closePath();
   }
 
   _renderConnections() {
-    const remainingOrbs = this._orbs.concat([]);
+    for (let i = 0; i < this._orbs.length; i++) {
+      const orb = this._orbs[i];
 
-    let orb;
-    while ((orb = remainingOrbs.pop()) !== undefined) {
-      for (const otherOrb of remainingOrbs) {
+      for (let j = i + 1; j < this._orbs.length; j++) {
+        const otherOrb = this._orbs[j];
+
         const distance = Point2.getDistanceBetween(orb.location, otherOrb.location);
         if (distance <= this._settings.connectionThreshold) {
           this._renderConnection(orb, otherOrb, distance);

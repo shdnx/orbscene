@@ -3,7 +3,7 @@ import glamorous from 'glamorous';
 
 import ControlsPanel from './ui/ControlsPanel';
 
-import SceneDriver from './scene/SceneDriver';
+import OrbSceneDriver from './orbscene';
 
 const MainContainer = glamorous.div({
   display: "flex",
@@ -74,7 +74,7 @@ export default class App extends React.Component {
     this._updateCanvasSize();
     window.addEventListener("resize", this._updateCanvasSize);
 
-    this._sceneDriver = new SceneDriver(this._canvasEl, App.initialSceneSettings);
+    this._sceneDriver = new OrbSceneDriver(this._canvasEl, App.initialSceneSettings);
     this._sceneDriver.run();
 
     // we have to force a re-render, so that <ControlsPanel> can render - it needs to have this._sceneDriver initialized, but that's not possible yet for the first render(), since we don't have a ref yet (I think?)

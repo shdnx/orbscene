@@ -1,4 +1,4 @@
-import { getRandomIntBetween } from '../util/math';
+import { getRandomIntBetween } from './util/math';
 
 export default class ColorRGB {
   static createRandom() {
@@ -18,4 +18,4 @@ export default class ColorRGB {
   toString() {
     return `rgb(${this.red}, ${this.green}, ${this.blue})`;
   }
-}
+};

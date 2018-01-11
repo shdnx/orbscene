@@ -1,6 +1,6 @@
 import { Point2 } from './geometry2D';
 import ColorRGB from './ColorRGB';
-import { getRandomIntBetween, clamp } from '../util/math';
+import { getRandomIntBetween, clamp } from './util/math';
 
 export default class Orb {
   constructor(loc, vec, size) {
